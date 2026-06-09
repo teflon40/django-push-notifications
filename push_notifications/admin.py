@@ -1,4 +1,4 @@
-from django.apps import apps
+# from django.apps import appsclear
 from django.contrib import admin, messages
 from django.utils.encoding import force_str
 from django.utils.translation import gettext_lazy as _
@@ -10,19 +10,19 @@ from .models import APNSDevice, GCMDevice, WebPushDevice, WNSDevice
 from .settings import PUSH_NOTIFICATIONS_SETTINGS as SETTINGS
 
 
-User = apps.get_model(*SETTINGS["USER_MODEL"].split("."))
+# User = apps.get_model(*SETTINGS["USER_MODEL"].split("."))
 
 
 class DeviceAdmin(admin.ModelAdmin):
-	list_display = ("__str__", "device_id", "user", "active", "date_created")
+	list_display = ("__str__", "device_id", "user_id", "active", "date_created")
 	list_filter = ("active",)
 	actions = ("send_message", "send_bulk_message", "enable", "disable")
-	raw_id_fields = ("user",)
+	# raw_id_fields = ("user",)
 
-	if hasattr(User, "USERNAME_FIELD"):
-		search_fields = ("name", "device_id", "user__%s" % (User.USERNAME_FIELD))
-	else:
-		search_fields = ("name", "device_id", "")
+	# if hasattr(User, "USERNAME_FIELD"):
+	# 	search_fields = ("name", "device_id", "user__%s" % (User.USERNAME_FIELD))
+	# else:
+	search_fields = ("name", "device_id", "user_id")
 
 	def send_messages(self, request: HttpRequest, queryset: QuerySet, bulk: bool = False) -> None:
 		"""
@@ -130,7 +130,7 @@ class DeviceAdmin(admin.ModelAdmin):
 
 class GCMDeviceAdmin(DeviceAdmin):
 	list_display = (
-		"__str__", "device_id", "user", "active", "date_created", "cloud_message_type"
+		"__str__", "device_id", "user_id", "active", "date_created", "cloud_message_type"
 	)
 	list_filter = ("active", "cloud_message_type")
 
@@ -167,13 +167,13 @@ class GCMDeviceAdmin(DeviceAdmin):
 
 
 class WebPushDeviceAdmin(DeviceAdmin):
-	list_display = ("__str__", "browser", "user", "active", "date_created")
+	list_display = ("__str__", "browser", "user_id", "active", "date_created")
 	list_filter = ("active", "browser")
 
-	if hasattr(User, "USERNAME_FIELD"):
-		search_fields = ("name", "registration_id", "user__%s" % (User.USERNAME_FIELD))
-	else:
-		search_fields = ("name", "registration_id", "")
+	# if hasattr(User, "USERNAME_FIELD"):
+	# 	search_fields = ("name", "registration_id", "user__%s" % (User.USERNAME_FIELD))
+	# else:
+	search_fields = ("name", "registration_id", "user_id")
 
 
 admin.site.register(APNSDevice, DeviceAdmin)

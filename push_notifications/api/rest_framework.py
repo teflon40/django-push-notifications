@@ -147,7 +147,8 @@ class WebPushDeviceSerializer(UniqueRegistrationSerializerMixin, ModelSerializer
 class IsOwner(permissions.BasePermission):
 	def has_object_permission(self, request: Any, view: Any, obj: Any) -> bool:
 		# must be the owner to view the object
-		return obj.user == request.user
+		# return obj.user == request.user
+		return obj.user_id == request.user.sub
 
 
 # Mixins
@@ -183,12 +184,12 @@ class DeviceViewSetMixin:
 
 	def perform_create(self, serializer: Serializer) -> Any:
 		if self.request.user.is_authenticated:
-			serializer.save(user=self.request.user)
+			serializer.save(user_id=self.request.user.sub)
 		return super().perform_create(serializer)
 
 	def perform_update(self, serializer: Serializer) -> Any:
 		if self.request.user.is_authenticated:
-			serializer.save(user=self.request.user)
+			serializer.save(user_id=self.request.user.sub)
 		return super().perform_update(serializer)
 
 
@@ -197,7 +198,7 @@ class AuthorizedMixin:
 
 	def get_queryset(self) -> Any:
 		# filter all devices to only those belonging to the current user
-		return self.queryset.filter(user=self.request.user)
+		return self.queryset.filter(user_id=self.request.user.sub)
 
 
 # ViewSets

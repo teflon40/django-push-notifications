@@ -25,9 +25,10 @@ class Device(models.Model):
 		verbose_name=_("Is active"), default=True,
 		help_text=_("Inactive devices will not be sent notifications")
 	)
-	user = models.ForeignKey(
-		SETTINGS["USER_MODEL"], blank=True, null=True, on_delete=models.CASCADE
-	)
+	# user = models.ForeignKey(
+	# 	SETTINGS["USER_MODEL"], blank=True, null=True, on_delete=models.CASCADE
+	# )
+	user_id = models.UUIDField(null=True, blank=True, db_index=True)
 	date_created = models.DateTimeField(
 		verbose_name=_("Creation date"), auto_now_add=True, null=True
 	)
@@ -47,7 +48,8 @@ class Device(models.Model):
 		return (
 			self.name or
 			str(self.device_id or "") or
-			"{} for {}".format(self.__class__.__name__, self.user or "unknown user")
+			# "{} for {}".format(self.__class__.__name__, self.user or "unknown user")
+			"{} for {}".format(self.__class__.__name__, self.user_id or "unknown user")
 		)
 
 

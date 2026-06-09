@@ -26,3 +26,5 @@ coverage.xml
 .vscode/*
 
 dist/
+
+db.sqlite3
