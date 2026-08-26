@@ -154,7 +154,7 @@ class IsOwner(permissions.BasePermission):
         # must be the owner to view the object
         # return obj.user == request.user
         logger.info(f"\t\n{obj.user_id}==={request.user.sub}")
-        return obj.user_id == request.user.sub
+        return obj.user_id == getattr(request.user.sub, None)
 
 
 # Mixins
@@ -200,7 +200,7 @@ class DeviceViewSetMixin:
 
 
 class AuthorizedMixin:
-    permission_classes: tuple = (permissions.IsAuthenticated, IsOwner)
+    permission_classes: tuple = (IsOwner)
 
     def get_queryset(self) -> Any:
         # filter all devices to only those belonging to the current user
