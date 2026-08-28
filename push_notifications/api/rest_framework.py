@@ -199,10 +199,6 @@ class DeviceViewSetMixin:
             serializer.save(user_id=self.request.user.sub)
         return super().perform_update(serializer)
 
-    def destroy(self, request, *args, **kwargs) -> Response:
-        logger.info("IN DESTROY")
-        return super().destroy(request, args, kwargs)
-
 
 class AuthorizedMixin:
     permission_classes: tuple = (IsOwner,)
