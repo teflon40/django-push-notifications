@@ -153,8 +153,9 @@ class IsOwner(permissions.BasePermission):
     def has_object_permission(self, request: Any, view: Any, obj: Any) -> bool:
         # must be the owner to view the object
         # return obj.user == request.user
-        logger.info(f"\t\n{obj.user_id}==={request.user.sub}")
-        return obj.user_id == getattr(request.user.sub, None)
+        sub = getattr(request.user, "sub", None)
+        logger.info("IsOwner: obj.user_id=%s sub=%s", obj.user_id, sub)
+        return sub is not None and str(obj.user_id) == str(sub)
 
 
 # Mixins
@@ -198,9 +199,13 @@ class DeviceViewSetMixin:
             serializer.save(user_id=self.request.user.sub)
         return super().perform_update(serializer)
 
+    def destroy(self, request, *args, **kwargs) -> Response:
+        logger.info("IN DESTROY")
+        return super().destroy(request, args, kwargs)
+
 
 class AuthorizedMixin:
-    permission_classes: tuple = (IsOwner)
+    permission_classes: tuple = (IsOwner,)
 
     def get_queryset(self) -> Any:
         # filter all devices to only those belonging to the current user
